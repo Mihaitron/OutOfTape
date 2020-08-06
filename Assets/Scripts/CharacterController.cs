@@ -9,6 +9,7 @@ public class CharacterController : MonoBehaviour
     public Transform spawner;
     public GameObject tape;
     public float throwPower;
+    public GameObject cam;
 
     private Rigidbody2D body;
     private Vector2 moveVelocity;
@@ -19,6 +20,9 @@ public class CharacterController : MonoBehaviour
     private GameObject underPlayer;
     private bool hasTape;
     private Rigidbody2D tapeBody;
+    private bool nearTape;
+    private GameObject tapeClone;
+
 
     // Start is called before the first frame update
     void Start()
@@ -35,7 +39,6 @@ public class CharacterController : MonoBehaviour
         if (Input.GetButtonDown("Jump") && !jump)
         {
             body.AddForce(Vector2.up * jumpSpeed);
-            //Debug.Log(body.velocity);
             jump = true;
         }
         
@@ -88,32 +91,71 @@ public class CharacterController : MonoBehaviour
             }
             else
             {
-                Pickup();
+                if (nearTape)
+                    Pickup();
             }
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground")
+        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Button")
         {
             jump = false;
             underPlayer = collision.gameObject;
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Tape")
+        {
+            nearTape = true;
+        }
+
+        
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Tape")
+        {
+            nearTape = false;
+        }
+
+        if (other.gameObject.tag == "RoomDoor")
+        {
+            cam.GetComponent<Movecamera>().moveRight();
+            other.GetComponent<BoxCollider2D>().isTrigger = false;
+            if (!hasTape)
+            {
+                Pickup();
+            }
+        }
+    }
+
     private void Throw()
     {
-        tapeBody = Instantiate(tape, spawner.position, spawner.rotation).GetComponent<Rigidbody2D>();
+        tapeClone = Instantiate(tape, spawner.position, spawner.rotation);
+        tapeBody = tapeClone.GetComponent<Rigidbody2D>();
+        hasTape = false;
+
         if (Input.GetAxis("Vertical") > 0)
         {
             //Debug.Log("CPLM?");
             tapeBody.AddForce(Vector2.up * throwPower);
         }
+        else if (Input.GetAxis("Horizontal") != 0)
+        {
+            Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), 0.6f);
+            moveVelocity = moveInput * throwPower;
+            tapeBody.AddForce(moveVelocity);
+        }
     }
 
     private void Pickup()
     {
-
+        Destroy(tapeClone);
+        hasTape = true;
     }
 }

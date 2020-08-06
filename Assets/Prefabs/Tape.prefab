@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1312068254836721889}
   - component: {fileID: 1312068254836721894}
   - component: {fileID: 1427667361397965565}
+  - component: {fileID: 5554461301729415880}
   m_Layer: 8
   m_Name: Tape
   m_TagString: Tape
@@ -130,3 +131,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.16, y: 0.16}
   m_EdgeRadius: 0
+--- !u!58 &5554461301729415880
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312068254836721895}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.00029980595, y: -0.0027542636}
+  serializedVersion: 2
+  m_Radius: 0.18480292
