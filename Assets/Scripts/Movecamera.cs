@@ -20,9 +20,6 @@ public class Movecamera : MonoBehaviour
     {
         if (ongoing)
             transform.position = Vector3.MoveTowards(transform.position, dest, speed);
-
-        if (ongoing && transform.position.x >= dest.x && transform.position.y >= dest.y)
-            ongoing = false;
     }
 
     public void moveRight()

@@ -10,6 +10,7 @@ public class CharacterController : MonoBehaviour
     public GameObject tape;
     public float throwPower;
     public GameObject cam;
+    public TrailRenderer trailRender;
 
     private Rigidbody2D body;
     private Vector2 moveVelocity;
@@ -21,7 +22,10 @@ public class CharacterController : MonoBehaviour
     private bool hasTape;
     private Rigidbody2D tapeBody;
     private bool nearTape;
+    private bool nearLever;
     private GameObject tapeClone;
+    private Lever lever;
+
 
 
     // Start is called before the first frame update
@@ -31,6 +35,7 @@ public class CharacterController : MonoBehaviour
         jump = false;
         facesRight = true;
         body = GetComponent<Rigidbody2D>();
+        nearLever = false;
     }
 
     // Update is called once per frame
@@ -85,15 +90,35 @@ public class CharacterController : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1"))
         {
-            if(hasTape)
-            {
-                Throw();
+            if (!nearLever)
+            { 
+                if(hasTape)
+                {
+                    Throw();
+                    trailRender.enabled = true;
+                }
+                else
+                {
+                    if (nearTape)
+                    { 
+                        Pickup();
+                        trailRender.Clear();
+                        trailRender.enabled = false;
+                    }
+                }
             }
-            else
+            else 
             {
-                if (nearTape)
-                    Pickup();
+                lever.ChangeActive();
             }
+        }
+
+        if (Input.GetButtonDown("Fire2") && !hasTape)
+        {
+            transform.position = new Vector3(tapeClone.transform.position.x, tapeClone.transform.position.y + 1, tapeClone.transform.position.z);
+            Pickup();
+            trailRender.Clear();
+            trailRender.enabled = false;
         }
     }
 
@@ -111,6 +136,12 @@ public class CharacterController : MonoBehaviour
         if (other.gameObject.tag == "Tape")
         {
             nearTape = true;
+        }
+        
+        if (other.gameObject.tag == "Lever")
+        {
+            nearLever = true;
+            lever = other.GetComponent<Lever>();
         }
 
         
@@ -131,6 +162,12 @@ public class CharacterController : MonoBehaviour
             {
                 Pickup();
             }
+        }
+
+        if (other.gameObject.tag == "Lever")
+        {
+            nearLever = false;
+            lever = null;
         }
     }
 

@@ -7,6 +7,8 @@ public class GroundButton : MonoBehaviour
 {
     public GameObject upPossition;
     public bool active;
+    public Sprite buttonUp;
+    public Sprite buttonDown;
 
     private bool tapeCol;
     private bool playerCol;
@@ -25,6 +27,7 @@ public class GroundButton : MonoBehaviour
             if (collision.transform.position.y > upPossition.transform.position.y)
             {
                 tapeCol = false;
+                GetComponent<SpriteRenderer>().sprite = buttonUp;
             }
         }
         else if (collision.gameObject.tag == "Player")
@@ -32,6 +35,7 @@ public class GroundButton : MonoBehaviour
             if (collision.transform.position.y > upPossition.transform.position.y)
             {
                 playerCol = false;
+                GetComponent<SpriteRenderer>().sprite = buttonUp;
             }
         }
 
@@ -45,6 +49,7 @@ public class GroundButton : MonoBehaviour
             if (collision.transform.position.y > upPossition.transform.position.y)
             {
                 tapeCol = true;
+                GetComponent<SpriteRenderer>().sprite = buttonDown;
             }
         }
         else if (collision.gameObject.tag == "Player")
@@ -52,6 +57,7 @@ public class GroundButton : MonoBehaviour
             if (collision.transform.position.y > upPossition.transform.position.y)
             {
                 playerCol = true;
+                GetComponent<SpriteRenderer>().sprite = buttonDown;
             }
         }
 
