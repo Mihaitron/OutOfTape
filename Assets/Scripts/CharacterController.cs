@@ -99,7 +99,7 @@ public class CharacterController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Button")
+        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Button" || collision.gameObject.tag == "Tape")
         {
             jump = false;
             underPlayer = collision.gameObject;
