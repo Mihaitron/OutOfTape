@@ -5,6 +5,7 @@ using UnityEngine;
 public class Cassette : MonoBehaviour
 {
     private GameObject button;
+    private float waitTime = 0.5f;
 
     // Start is called before the first frame update
     void Start()
@@ -14,7 +15,14 @@ public class Cassette : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (waitTime <= 0)
+        {
+            GetComponent<BoxCollider2D>().enabled = true;
+        }
+        else
+        {
+            waitTime -= Time.deltaTime;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

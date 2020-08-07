@@ -10,6 +10,7 @@ public class CharacterController : MonoBehaviour
     public GameObject tape;
     public float throwPower;
     public GameObject cam;
+    public TrailRenderer trailRender;
 
     private Rigidbody2D body;
     private Vector2 moveVelocity;
@@ -24,6 +25,7 @@ public class CharacterController : MonoBehaviour
     private bool nearLever;
     private GameObject tapeClone;
     private Lever lever;
+
 
 
     // Start is called before the first frame update
@@ -93,11 +95,16 @@ public class CharacterController : MonoBehaviour
                 if(hasTape)
                 {
                     Throw();
+                    trailRender.enabled = true;
                 }
                 else
                 {
                     if (nearTape)
+                    { 
                         Pickup();
+                        trailRender.Clear();
+                        trailRender.enabled = false;
+                    }
                 }
             }
             else 
@@ -110,6 +117,8 @@ public class CharacterController : MonoBehaviour
         {
             transform.position = new Vector3(tapeClone.transform.position.x, tapeClone.transform.position.y + 1, tapeClone.transform.position.z);
             Pickup();
+            trailRender.Clear();
+            trailRender.enabled = false;
         }
     }
 
