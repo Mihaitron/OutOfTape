@@ -13,14 +13,7 @@ public class SlidingPlatform : MonoBehaviour
     private bool moovingA = false;
     private float waitTime = 0.7f;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (moovingB)
         {

@@ -1,198 +1,147 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
 public class CharacterController : MonoBehaviour
 {
-    public float movementSpeed;
-    public float jumpSpeed;
-    public Transform spawner;
-    public GameObject tape;
-    public float throwPower;
-    public GameObject cam;
-    public TrailRenderer trailRender;
+    [SerializeField] private float m_JumpForce = 400f;                          // Amount of force added when the player jumps.
+    [Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;          // Amount of maxSpeed applied to crouching movement. 1 = 100%
+    [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;  // How much to smooth out the movement
+    [SerializeField] private bool m_AirControl = false;                         // Whether or not a player can steer while jumping;
+    [SerializeField] private LayerMask m_WhatIsGround;                          // A mask determining what is ground to the character
+    [SerializeField] private Transform m_GroundCheck;                           // A position marking where to check if the player is grounded.
+    [SerializeField] private Transform m_CeilingCheck;                          // A position marking where to check for ceilings
+    [SerializeField] private Collider2D m_CrouchDisableCollider;                // A collider that will be disabled when crouching
 
-    private Rigidbody2D body;
-    private Vector2 moveVelocity;
-    private bool jump;
-    private bool facesRight;
-    private float gravity;
-    private float waitTime = 0.1f;
-    private GameObject underPlayer;
-    private bool hasTape;
-    private Rigidbody2D tapeBody;
-    private bool nearTape;
-    private bool nearLever;
-    private GameObject tapeClone;
-    private Lever lever;
+    const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
+    private bool m_Grounded;            // Whether or not the player is grounded.
+    const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
+    private Rigidbody2D m_Rigidbody2D;
+    private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+    private Vector3 m_Velocity = Vector3.zero;
 
+    [Header("Events")]
+    [Space]
 
+    public UnityEvent OnLandEvent;
 
-    // Start is called before the first frame update
-    void Start()
+    [System.Serializable]
+    public class BoolEvent : UnityEvent<bool> { }
+
+    public BoolEvent OnCrouchEvent;
+    private bool m_wasCrouching = false;
+
+    private void Awake()
     {
-        hasTape = true;
-        jump = false;
-        facesRight = true;
-        body = GetComponent<Rigidbody2D>();
-        nearLever = false;
+        m_Rigidbody2D = GetComponent<Rigidbody2D>();
+
+        if (OnLandEvent == null)
+            OnLandEvent = new UnityEvent();
+
+        if (OnCrouchEvent == null)
+            OnCrouchEvent = new BoolEvent();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        if (Input.GetButtonDown("Jump") && !jump)
+        bool wasGrounded = m_Grounded;
+        m_Grounded = false;
+
+        // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
+        // This can be done using layers instead but Sample Assets will not overwrite your project settings.
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
+        for (int i = 0; i < colliders.Length; i++)
         {
-            body.AddForce(Vector2.up * jumpSpeed);
-            jump = true;
-        }
-        
-        if (Input.GetAxis("Vertical") < 0)
-        {
-            if (waitTime <= 0)
+            if (colliders[i].gameObject != gameObject)
             {
-                if (underPlayer.GetComponent<FallThroughPlatform>() != null)
+                m_Grounded = true;
+                if (!wasGrounded)
+                    OnLandEvent.Invoke();
+            }
+        }
+    }
+
+
+    public void Move(float move, bool crouch, bool jump)
+    {
+        // If crouching, check to see if the character can stand up
+        if (!crouch)
+        {
+            // If the character has a ceiling preventing them from standing up, keep them crouching
+            if (Physics2D.OverlapCircle(m_CeilingCheck.position, k_CeilingRadius, m_WhatIsGround))
+            {
+                crouch = true;
+            }
+        }
+
+        //only control the player if grounded or airControl is turned on
+        if (m_Grounded || m_AirControl)
+        {
+
+            // If crouching
+            if (crouch)
+            {
+                if (!m_wasCrouching)
                 {
-                    underPlayer.GetComponent<FallThroughPlatform>().ChangeRotation();
+                    m_wasCrouching = true;
+                    OnCrouchEvent.Invoke(true);
                 }
+
+                // Reduce the speed by the crouchSpeed multiplier
+                move *= m_CrouchSpeed;
+
+                // Disable one of the colliders when crouching
+                if (m_CrouchDisableCollider != null)
+                    m_CrouchDisableCollider.enabled = false;
             }
             else
             {
-                waitTime -= Time.deltaTime;
-            }
-        }
+                // Enable the collider when not crouching
+                if (m_CrouchDisableCollider != null)
+                    m_CrouchDisableCollider.enabled = true;
 
-        else if (Input.GetAxis("Vertical") == 0)
-        {
-            waitTime = 0.5f;
-        }
-        
-        if (!jump)
-        { 
-            Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), 0);
-            moveVelocity = moveInput * movementSpeed;
-            body.AddForce(moveVelocity);
-        }
-        else
-        {
-            Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), 0);
-            moveVelocity = moveInput * movementSpeed / 4;
-            body.AddForce(moveVelocity);
-        }
-
-        if ((Input.GetAxis("Horizontal") < 0 && facesRight) || (Input.GetAxis("Horizontal") > 0 && !facesRight))
-        {
-            Vector3 theScale = transform.localScale;
-            theScale.x *= -1;
-            transform.localScale = theScale;
-            facesRight = !facesRight;
-        }
-
-        if (Input.GetButtonDown("Fire1"))
-        {
-            if (!nearLever)
-            { 
-                if(hasTape)
+                if (m_wasCrouching)
                 {
-                    Throw();
-                    trailRender.enabled = true;
-                }
-                else
-                {
-                    if (nearTape)
-                    { 
-                        Pickup();
-                        trailRender.Clear();
-                        trailRender.enabled = false;
-                    }
+                    m_wasCrouching = false;
+                    OnCrouchEvent.Invoke(false);
                 }
             }
-            else 
+
+            // Move the character by finding the target velocity
+            Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
+            // And then smoothing it out and applying it to the character
+            m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
+
+            // If the input is moving the player right and the player is facing left...
+            if (move > 0 && !m_FacingRight)
             {
-                lever.ChangeActive();
+                // ... flip the player.
+                Flip();
+            }
+            // Otherwise if the input is moving the player left and the player is facing right...
+            else if (move < 0 && m_FacingRight)
+            {
+                // ... flip the player.
+                Flip();
             }
         }
-
-        if (Input.GetButtonDown("Fire2") && !hasTape)
+        // If the player should jump...
+        if (m_Grounded && jump)
         {
-            transform.position = new Vector3(tapeClone.transform.position.x, tapeClone.transform.position.y + 1, tapeClone.transform.position.z);
-            Pickup();
-            trailRender.Clear();
-            trailRender.enabled = false;
+            // Add a vertical force to the player.
+            m_Grounded = false;
+            m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+
+    private void Flip()
     {
-        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Button" || collision.gameObject.tag == "Tape")
-        {
-            jump = false;
-            underPlayer = collision.gameObject;
-        }
-    }
+        // Switch the way the player is labelled as facing.
+        m_FacingRight = !m_FacingRight;
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "Tape")
-        {
-            nearTape = true;
-        }
-        
-        if (other.gameObject.tag == "Lever")
-        {
-            nearLever = true;
-            lever = other.GetComponent<Lever>();
-        }
-
-        
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "Tape")
-        {
-            nearTape = false;
-        }
-
-        if (other.gameObject.tag == "RoomDoor")
-        {
-            cam.GetComponent<Movecamera>().moveRight();
-            other.GetComponent<BoxCollider2D>().isTrigger = false;
-            if (!hasTape)
-            {
-                Pickup();
-            }
-        }
-
-        if (other.gameObject.tag == "Lever")
-        {
-            nearLever = false;
-            lever = null;
-        }
-    }
-
-    private void Throw()
-    {
-        tapeClone = Instantiate(tape, spawner.position, spawner.rotation);
-        tapeBody = tapeClone.GetComponent<Rigidbody2D>();
-        hasTape = false;
-
-        if (Input.GetAxis("Vertical") > 0)
-        {
-            //Debug.Log("CPLM?");
-            tapeBody.AddForce(Vector2.up * throwPower);
-        }
-        else if (Input.GetAxis("Horizontal") != 0)
-        {
-            Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), 0.6f);
-            moveVelocity = moveInput * throwPower;
-            tapeBody.AddForce(moveVelocity);
-        }
-    }
-
-    private void Pickup()
-    {
-        Destroy(tapeClone);
-        hasTape = true;
+        // Multiply the player's x local scale by -1.
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
     }
 }
