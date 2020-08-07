@@ -37,7 +37,7 @@ public class SlidingPlatformActivate : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (isLever)
         {

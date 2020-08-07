@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Cassette : MonoBehaviour
 {
+    public float waitTime = 0.3f;
+
     private GameObject button;
-    private float waitTime = 0.5f;
 
     // Start is called before the first frame update
     void Start()
