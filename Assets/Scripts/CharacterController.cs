@@ -105,6 +105,12 @@ public class CharacterController : MonoBehaviour
                 lever.ChangeActive();
             }
         }
+
+        if (Input.GetButtonDown("Fire2") && !hasTape)
+        {
+            transform.position = new Vector3(tapeClone.transform.position.x, tapeClone.transform.position.y + 1, tapeClone.transform.position.z);
+            Pickup();
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

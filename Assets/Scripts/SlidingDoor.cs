@@ -14,7 +14,6 @@ public class SlidingDoor : MonoBehaviour
     private GroundButton button;
     private bool buttonStatus;
     private bool isLever;
-    //private bool currentPosition = false;
     private bool moovingB = false;
     private bool moovingA = false;
 
