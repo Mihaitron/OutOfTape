@@ -8,6 +8,7 @@ TagManager:
   - Tape
   - RoomDoor
   - Button
+  - Lever
   layers:
   - Default
   - TransparentFX

@@ -21,7 +21,9 @@ public class CharacterController : MonoBehaviour
     private bool hasTape;
     private Rigidbody2D tapeBody;
     private bool nearTape;
+    private bool nearLever;
     private GameObject tapeClone;
+    private Lever lever;
 
 
     // Start is called before the first frame update
@@ -31,6 +33,7 @@ public class CharacterController : MonoBehaviour
         jump = false;
         facesRight = true;
         body = GetComponent<Rigidbody2D>();
+        nearLever = false;
     }
 
     // Update is called once per frame
@@ -85,14 +88,21 @@ public class CharacterController : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1"))
         {
-            if(hasTape)
-            {
-                Throw();
+            if (!nearLever)
+            { 
+                if(hasTape)
+                {
+                    Throw();
+                }
+                else
+                {
+                    if (nearTape)
+                        Pickup();
+                }
             }
-            else
+            else 
             {
-                if (nearTape)
-                    Pickup();
+                lever.ChangeActive();
             }
         }
     }
@@ -111,6 +121,12 @@ public class CharacterController : MonoBehaviour
         if (other.gameObject.tag == "Tape")
         {
             nearTape = true;
+        }
+        
+        if (other.gameObject.tag == "Lever")
+        {
+            nearLever = true;
+            lever = other.GetComponent<Lever>();
         }
 
         
@@ -131,6 +147,12 @@ public class CharacterController : MonoBehaviour
             {
                 Pickup();
             }
+        }
+
+        if (other.gameObject.tag == "Lever")
+        {
+            nearLever = false;
+            lever = null;
         }
     }
 
