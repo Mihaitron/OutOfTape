@@ -144,6 +144,11 @@ public class CharacterMovement : MonoBehaviour
             }
         }
 
+        if (other.gameObject.tag == "LevelDoor")
+        {
+            other.gameObject.GetComponent<NextLevelDoor>().NextLevel();
+        }
+
         if (other.gameObject.tag == "Lever")
         {
             nearLever = false;

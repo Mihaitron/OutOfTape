@@ -9,6 +9,7 @@ TagManager:
   - RoomDoor
   - Button
   - Lever
+  - LevelDoor
   layers:
   - Default
   - TransparentFX
