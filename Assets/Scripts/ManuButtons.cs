@@ -5,6 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class ManuButtons : MonoBehaviour
 {
+    public AudioSource audio;
+
+    public void ToggleMusic()
+    {
+        if (audio.volume > 0)
+            audio.volume = 0;
+        else
+            audio.volume = 0.5f;
+    }
+
     public void ExitGame()
     {
         Application.Quit();
@@ -14,4 +24,6 @@ public class ManuButtons : MonoBehaviour
     {
         SceneManager.LoadScene(1);
     }
+
+
 }
