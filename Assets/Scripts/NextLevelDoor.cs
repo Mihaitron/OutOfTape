@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class NextLevelDoor : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public string nextLevel;
+    public GameObject gameManager;
 
-    // Update is called once per frame
-    void Update()
+    public void NextLevel()
     {
-        
+        gameManager.GetComponent<GameManager>().ChangeScene(nextLevel);
     }
 }

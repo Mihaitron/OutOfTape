@@ -139,7 +139,14 @@ public class CharacterMovement : MonoBehaviour
             if (!hasTape)
             {
                 Pickup();
+                trailRender.Clear();
+                trailRender.enabled = false;
             }
+        }
+
+        if (other.gameObject.tag == "LevelDoor")
+        {
+            other.gameObject.GetComponent<NextLevelDoor>().NextLevel();
         }
 
         if (other.gameObject.tag == "Lever")
