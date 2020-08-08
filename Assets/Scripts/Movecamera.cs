@@ -16,7 +16,7 @@ public class Movecamera : MonoBehaviour
         ongoing = false;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (ongoing)
             transform.position = Vector3.MoveTowards(transform.position, dest, speed);
