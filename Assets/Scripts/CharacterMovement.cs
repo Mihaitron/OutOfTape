@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -141,6 +142,14 @@ public class CharacterMovement : MonoBehaviour
                 Pickup();
                 trailRender.Clear();
                 trailRender.enabled = false;
+            }
+
+            Tutorial tutorial = other.gameObject.GetComponent<Tutorial>();
+            if (tutorial != null)
+            {
+                int index = Int16.Parse(other.gameObject.name);
+
+                StartCoroutine(tutorial.ChangeTutorial(index));
             }
         }
 
