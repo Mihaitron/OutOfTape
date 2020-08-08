@@ -2,17 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ManuButtons : MonoBehaviour
 {
-    public AudioSource audio;
+    public GameObject audio;
+    public Sprite[] images;
 
     public void ToggleMusic()
     {
-        if (audio.volume > 0)
-            audio.volume = 0;
+        AudioSource audio_source = audio.GetComponent<AudioSource>();
+
+        if (audio_source.volume > 0)
+        {
+            audio_source.volume = 0;
+            GameObject.Find("StopMusic").GetComponent<Image>().sprite = images[1];
+        }
         else
-            audio.volume = 0.5f;
+        {
+            audio_source.volume = 0.5f;
+            GameObject.Find("StopMusic").GetComponent<Image>().sprite = images[0];
+        }
     }
 
     public void ExitGame()
