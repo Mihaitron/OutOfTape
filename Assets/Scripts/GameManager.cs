@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 {
     public RawImage pauseScreen;
 
+    private AudioSource audio;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -33,5 +35,15 @@ public class GameManager : MonoBehaviour
     public void ChangeScene(string scene)
     {
         SceneManager.LoadScene(scene);
+    }
+
+    public void ToggleMusic()
+    {
+        audio = GameObject.Find("Audio Source").GetComponent<AudioSource>();
+
+        if (audio.volume > 0)
+            audio.volume = 0;
+        else
+            audio.volume = 0.5f;
     }
 }
