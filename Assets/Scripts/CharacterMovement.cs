@@ -139,6 +139,8 @@ public class CharacterMovement : MonoBehaviour
             if (!hasTape)
             {
                 Pickup();
+                trailRender.Clear();
+                trailRender.enabled = false;
             }
         }
 
