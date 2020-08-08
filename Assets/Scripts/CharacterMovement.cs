@@ -12,6 +12,7 @@ public class CharacterMovement : MonoBehaviour
     public float throwPower;
     public GameObject cam;
     public TrailRenderer trailRender;
+    public Animator animator;
 
     private float horizontalMove = 0f;
     private bool jump = false;
@@ -35,9 +36,12 @@ public class CharacterMovement : MonoBehaviour
     {
         horizontalMove = Input.GetAxisRaw("Horizontal") * speed;
 
+        animator.SetFloat("speed", Mathf.Abs(horizontalMove));
+
         if (Input.GetButtonDown("Jump"))
         {
             jump = true;
+            animator.SetBool("is_jumping", true);
         }
 
         if (Input.GetAxis("Vertical") < 0)
@@ -99,6 +103,7 @@ public class CharacterMovement : MonoBehaviour
         controller.Move(horizontalMove * Time.fixedDeltaTime, false, jump);
 
         jump = false;
+        animator.SetBool("is_jumping", false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -171,6 +176,9 @@ public class CharacterMovement : MonoBehaviour
         tapeBody = tapeClone.GetComponent<Rigidbody2D>();
         hasTape = false;
 
+        animator.Play("Terry_Throw");
+        animator.SetBool("has_cassette", false);
+
         if (Input.GetAxis("Vertical") > 0)
         {
             //Debug.Log("CPLM?");
@@ -182,11 +190,14 @@ public class CharacterMovement : MonoBehaviour
             moveVelocity = moveInput * throwPower;
             tapeBody.AddForce(moveVelocity);
         }
+
+        animator.SetBool("is_throwing", false);
     }
 
     private void Pickup()
     {
         Destroy(tapeClone);
         hasTape = true;
+        animator.SetBool("has_cassette", true);
     }
 }

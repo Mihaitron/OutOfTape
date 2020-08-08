@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
         else
         {
             audio_source.volume = 0.5f;
-            GameObject.Find("StopMusic").GetComponent<Image>().sprite = images[1];
+            GameObject.Find("StopMusic").GetComponent<Image>().sprite = images[0];
         }
     }
 }
