@@ -7,8 +7,9 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public RawImage pauseScreen;
+    public Sprite[] images;
 
-    private AudioSource audio;
+    private AudioSource audio_source;
 
     private void Update()
     {
@@ -32,18 +33,25 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void ChangeScene(string scene)
+    public void ChangeScene(int scene)
     {
         SceneManager.LoadScene(scene);
     }
 
     public void ToggleMusic()
     {
-        audio = GameObject.Find("Audio Source").GetComponent<AudioSource>();
+        GameObject audio = GameObject.Find("Audio Source");
+        audio_source = audio.GetComponent<AudioSource>();
 
-        if (audio.volume > 0)
-            audio.volume = 0;
+        if (audio_source.volume > 0)
+        {
+            audio_source.volume = 0;
+            GameObject.Find("StopMusic").GetComponent<Image>().sprite = images[1];
+        }
         else
-            audio.volume = 0.5f;
+        {
+            audio_source.volume = 0.5f;
+            GameObject.Find("StopMusic").GetComponent<Image>().sprite = images[1];
+        }
     }
 }
