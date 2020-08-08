@@ -4087,6 +4087,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseScreen: {fileID: 450787742}
+  images:
+  - {fileID: 21300000, guid: 39f6bda518c323d409cf475f1de94f5b, type: 3}
+  - {fileID: 21300000, guid: 4d6910c4a18af234a80ab279526dfb40, type: 3}
 --- !u!1 &900382744
 GameObject:
   m_ObjectHideFlags: 0
@@ -6599,8 +6602,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -58, y: -48.510864}
-  m_SizeDelta: {x: 50, y: 50}
+  m_AnchoredPosition: {x: -64.64, y: -55.15}
+  m_SizeDelta: {x: 63.282593, y: 63.282593}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1577695733
 MonoBehaviour:
@@ -6675,8 +6678,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 39f6bda518c323d409cf475f1de94f5b, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

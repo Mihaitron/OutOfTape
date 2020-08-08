@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NextLevelDoor : MonoBehaviour
 {
-    public string nextLevel;
+    public int nextLevel;
     public GameObject gameManager;
 
     public void NextLevel()
